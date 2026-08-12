@@ -175,9 +175,7 @@ function GaugeCard({ prediction, loading }: { prediction: Prediction | null; loa
         {loading
           ? "Collecting the selected road, live weather and current traffic information."
           : prediction
-            ? prediction.road_risk.level === "Low"
-              ? "Current signals are comparatively lower risk. Stay attentive and follow road rules."
-              : "Current conditions indicate elevated road risk. Please drive carefully."
+            ? "Current conditions indicate elevated road risk. Please drive carefully."
             : "Select a real road above. No score is displayed until current data is collected."}
       </p>
       <div className="riskMetaGrid">
