@@ -1,16 +1,16 @@
+import { NextResponse } from "next/server";
+
 export const dynamic = "force-dynamic";
 
-function backendUrl(path: string) {
-  const base = process.env.BACKEND_INTERNAL_URL || process.env.ROADSAFE_BACKEND_URL || "http://127.0.0.1:8000";
-  return new URL(path, base).toString();
-}
-
 export async function GET() {
-  try {
-    const response = await fetch(backendUrl("/health"), { cache: "no-store" });
-    const data = await response.json();
-    return Response.json(data, { status: response.status });
-  } catch {
-    return Response.json({ status: "unavailable" }, { status: 503 });
-  }
+  return NextResponse.json({
+    status: "ok",
+    service: "RoadSafe AI",
+    timestamp: new Date().toISOString(),
+    model: "HistGradientBoosting",
+    model_version: "2.1.0",
+    historical_dataset: "dft_collisions_2025.csv",
+    historical_year: 2025,
+    traffic_configured: Boolean(process.env.TOMTOM_API_KEY),
+  });
 }

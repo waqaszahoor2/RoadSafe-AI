@@ -1,28 +1,38 @@
+import { NextResponse } from "next/server";
+import { runPredictionPipeline } from "./engine";
+
 export const dynamic = "force-dynamic";
 
-function backendUrl(path: string) {
-  const base = process.env.BACKEND_INTERNAL_URL || process.env.ROADSAFE_BACKEND_URL || "http://127.0.0.1:8000";
-  return new URL(path, base).toString();
-}
-
 export async function POST(request: Request) {
-  const body = await request.text();
   try {
-    const response = await fetch(backendUrl("/predict"), {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body,
-      cache: "no-store",
+    const body = await request.json();
+    if (!body || !body.road_name || !body.city || !body.state) {
+      return NextResponse.json(
+        { detail: "Missing required prediction fields (road_name, city, state, country)." },
+        { status: 400 }
+      );
+    }
+
+    const supportedCountries = ["United Kingdom", "UK", "Great Britain"];
+    if (!supportedCountries.includes(body.country || "United Kingdom")) {
+      return NextResponse.json(
+        { detail: `A validated country-specific model is not available for ${body.country}. Current production model supports the United Kingdom.` },
+        { status: 422 }
+      );
+    }
+
+    const prediction = await runPredictionPipeline({
+      country: body.country || "United Kingdom",
+      state: body.state,
+      city: body.city,
+      road_type: body.road_type || "A / Main Road",
+      road_name: body.road_name,
     });
-    const text = await response.text();
-    return new Response(text, {
-      status: response.status,
-      headers: { "content-type": response.headers.get("content-type") || "application/json" },
-    });
-  } catch {
-    return Response.json(
-      { detail: "Prediction service is unavailable. Check the FastAPI service deployment." },
-      { status: 503 },
-    );
+
+    return NextResponse.json(prediction);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Live road prediction failed.";
+    const isClientError = message.includes("could not be located") || message.includes("supported");
+    return NextResponse.json({ detail: message }, { status: isClientError ? 404 : 503 });
   }
 }

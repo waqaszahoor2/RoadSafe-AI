@@ -380,8 +380,8 @@ export default function Dashboard({ initialSection }: { initialSection?: string 
       <div className="mainColumn">
         <header className="topbar">
           <button className="menuButton" onClick={() => setMobileMenu(true)} aria-label="Open menu"><Menu/></button>
-          <div className={`liveStatus ${apiHealthy === false ? "offline" : ""}`}><i/>{apiHealthy === null ? "Checking services" : apiHealthy ? "Live Data" : "Service unavailable"}<span>•</span><small>{apiHealthy ? "Ready" : ""}</small></div>
-          <div className="topWeather">{prediction ? <><CloudRain size={25}/><span><strong><Temperature celsius={conditions?.temperature_c} units={units}/></strong><small>{conditions?.weather}</small></span></> : <><Activity size={22}/><span><strong>No live check yet</strong><small>Use the road form below</small></span></>}</div>
+          <div className={`liveStatus ${apiHealthy === false ? "offline" : ""}`}><i/>{prediction ? "Live Data" : apiHealthy ? "Live Service" : "Service unavailable"}<span>•</span><small>{prediction ? "Updated just now" : apiHealthy ? "Ready for road check" : "Try again"}</small></div>
+          <div className="topWeather">{prediction ? <><CloudRain size={25}/><span><strong><Temperature celsius={conditions?.temperature_c} units={units}/></strong><small>{conditions?.weather}</small></span></> : <><Activity size={22}/><span><strong>Ready for road check</strong><small>Select a road below</small></span></>}</div>
           <div className="userChip"><div className="avatar">U</div><span>Hello, User</span></div>
         </header>
 
@@ -405,11 +405,11 @@ export default function Dashboard({ initialSection }: { initialSection?: string 
           <section className="conditionsPanel panel" id="results">
             <div className="panelHeading"><div><span className="eyebrow">Live Conditions</span><h3>{prediction ? `${prediction.user_input.road_name}, ${prediction.user_input.city}` : "Waiting for a live road check"}</h3></div>{prediction && <span className="sourceTag"><CheckCircle2 size={14}/> Fresh data</span>}</div>
             <div className="conditionGrid">
-              <div><CloudRain/><span><small>Weather</small><strong>{conditions?.weather ?? "Not fetched"}</strong><em>{conditions ? <Temperature celsius={conditions.temperature_c} units={units}/> : "—"}</em></span></div>
-              <div><Umbrella/><span><small>Rain Intensity</small><strong>{conditions?.rain_intensity ?? "Not fetched"}</strong><em>{conditions ? `${conditions.rain_mm ?? 0} mm` : "—"}</em></span></div>
-              <div><Gauge/><span><small>Visibility</small><strong>{conditions?.visibility_km != null && conditions.visibility_km < 10 ? "Reduced" : conditions ? "Good" : "Not fetched"}</strong><em>{conditions ? <Distance km={conditions.visibility_km} units={units}/> : "—"}</em></span></div>
-              <div><TrafficCone/><span><small>Traffic</small><strong>{prediction?.traffic.available ? prediction.traffic.congestion_label : prediction ? "Unavailable" : "Not checked"}</strong><em>{prediction?.traffic.available ? `${Math.round(prediction.traffic.current_speed_kmh ?? 0)} km/h` : prediction?.traffic.reason ?? "—"}</em></span></div>
-              <div><Wind/><span><small>Road Condition</small><strong>{conditions?.road_surface_estimate ?? "Not estimated"}</strong><em>{conditions?.rush_hour ? "Rush hour" : conditions?.night ? "Night" : conditions ? "Current period" : "—"}</em></span></div>
+              <div><CloudRain/><span><small>Weather</small><strong>{conditions?.weather ?? "Waiting for road check"}</strong><em>{conditions ? <Temperature celsius={conditions.temperature_c} units={units}/> : "—"}</em></span></div>
+              <div><Umbrella/><span><small>Rain Intensity</small><strong>{conditions?.rain_intensity ?? "Waiting for road check"}</strong><em>{conditions ? `${conditions.rain_mm ?? 0} mm` : "—"}</em></span></div>
+              <div><Gauge/><span><small>Visibility</small><strong>{conditions?.visibility_km != null ? (conditions.visibility_km < 10 ? "Reduced" : "Good") : conditions ? "Good" : "Waiting for road check"}</strong><em>{conditions ? <Distance km={conditions.visibility_km} units={units}/> : "—"}</em></span></div>
+              <div><TrafficCone/><span><small>Traffic</small><strong>{prediction?.traffic.available ? prediction.traffic.congestion_label : prediction ? "Live traffic unavailable" : "Waiting for road check"}</strong><em>{prediction?.traffic.available ? `${Math.round(prediction.traffic.current_speed_kmh ?? 0)} km/h` : prediction?.traffic.reason ?? "—"}</em></span></div>
+              <div><Wind/><span><small>Road Condition</small><strong>{conditions?.road_surface_estimate ?? "Waiting for road check"}</strong><em>{conditions?.rush_hour ? "Rush hour" : conditions?.night ? "Night" : conditions ? "Current period" : "—"}</em></span></div>
             </div>
           </section>
 
