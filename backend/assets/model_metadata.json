@@ -1,0 +1,31 @@
+{
+  "dataset": "dft_collisions_2025.csv",
+  "historical_year": 2025,
+  "features": [
+    "latitude",
+    "longitude",
+    "first_road_class",
+    "hour",
+    "day_of_week",
+    "month",
+    "is_weekend",
+    "is_rush_hour",
+    "is_night",
+    "hour_sin",
+    "hour_cos",
+    "month_sin",
+    "month_cos",
+    "rain_flag",
+    "high_wind_flag",
+    "fog_flag",
+    "wet_surface_flag",
+    "ice_snow_surface_flag",
+    "daylight_flag"
+  ],
+  "target": "collision_severity",
+  "classes": {
+    "1": "Fatal",
+    "2": "Serious",
+    "3": "Slight"
+  }
+}
